@@ -1,0 +1,77 @@
+name: "Reusable ecs deploy"
+
+on:
+  workflow_call:
+    inputs:
+      container-name:
+        required: true
+        type: string
+      aws-region:
+        required: false
+        type: string
+        default: "ap-northeast-1"
+      aws-access-key-id:
+        required: true
+        type: string
+      role-to-assume:
+        required: true
+        type: string
+      role-session-name:
+        required: true
+        type: string
+      task-definition:
+        required: true
+        type: string
+      image:
+        required: true
+        type: string
+      ecs-service:
+        required: true
+        type: string
+      ecs-cluster:
+        required: true
+        type: string
+      wait-for-minutes:
+        required: false
+        type: number
+        default: 10
+    secrets:
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        id: download-task-definition
+        with:
+          name: ${{ inputs.task-definition }}
+          path: download
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.download-task-definition.outputs.download-path }}/${{ inputs.task-definition }}.json
+          container-name: ${{ inputs.container-name }}
+          image: ${{ inputs.image }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ inputs.aws-access-key-id }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws-region }}
+          role-to-assume: ${{ inputs.role-to-assume }}
+          role-session-name: ${{ inputs.role-session-name }}
+          role-duration-seconds: 1800
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-definition.outputs.task-definition }}
+          cluster: ${{ inputs.ecs-cluster }}
+          service: ${{ inputs.ecs-service }}
+          wait-for-service-stability: true
+          wait-for-minutes: ${{ inputs.wait-for-minutes }}
