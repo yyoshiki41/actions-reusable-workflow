@@ -24,7 +24,7 @@ on:
         type: string
     secrets:
       READ_AND_WRITE_GHCR_TOKEN:
-        required: true
+        required: false
       IMPORT_PRIVATE_REPO_GITHUB_TOKEN:
         required: false
     outputs:
