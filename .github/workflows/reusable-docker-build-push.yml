@@ -22,14 +22,11 @@ on:
       dockerfile:
         required: true
         type: string
-      build-args:
-        required: false
-        type: string
     secrets:
-      registry-password:
+      READ_AND_WRITE_GHCR_TOKEN:
         required: true
       IMPORT_PRIVATE_REPO_GITHUB_TOKEN:
-        required: true
+        required: false
     outputs:
       image:
         value: ${{ jobs.build.outputs.image }}
@@ -47,7 +44,7 @@ jobs:
         with:
           registry: ${{ inputs.registry }}
           username: ${{ inputs.registry-username }}
-          password: ${{ inputs.registry-password }}
+          password: ${{ secrets.READ_AND_WRITE_GHCR_TOKEN }}
 
       - name: Set current date and time as env variables
         run: |
