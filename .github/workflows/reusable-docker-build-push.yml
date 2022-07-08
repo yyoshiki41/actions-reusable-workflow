@@ -25,6 +25,9 @@ on:
       go-version:
         required: false
         type: string
+      alpine-version:
+        required: false
+        type: string
     secrets:
       READ_AND_WRITE_GHCR_TOKEN:
         required: true
@@ -75,6 +78,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             GO_VERSION=${{ inputs.go-version }}
+            ALPINE_VERSION=${{ inputs.alpine-version }}
             IMPORT_PRIVATE_REPO_GITHUB_TOKEN=${{ secrets.IMPORT_PRIVATE_REPO_GITHUB_TOKEN }}
 
       - id: set-output-image
