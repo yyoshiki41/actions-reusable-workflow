@@ -25,9 +25,18 @@ on:
       go-version:
         required: false
         type: string
+      go-version-file:
+        required: false
+        type: string
+        description: "If both the `go-version` and the `go-version-file` inputs are provided then the `go-version` input is used."
       alpine-version:
         required: false
         type: string
+      alpine-version-file:
+        required: false
+        type: string
+        description: "If both the `alpine-version` and the `alpine-version-file` inputs are provided then the `alpine-version` input is used."
+
     secrets:
       READ_AND_WRITE_GHCR_TOKEN:
         required: true
@@ -64,6 +73,20 @@ jobs:
           tags: |
             type=sha,prefix=${{ env.DATE }}-${{ env.TIME }}-
 
+      - name: Set GO_VERSION
+        run: |
+          echo "GO_VERSION=${{ inputs.go-version }}" >> $GITHUB_ENV
+          if [ '${{ inputs.go-version }}' == '' && '${{ inputs.go-version-file }}' != '' ]; then
+            echo "GO_VERSION=$(cat ${{ inputs.go-version-file }})" >> $GITHUB_ENV
+          fi
+
+      - name: Set ALPINE_VERSION
+        run: |
+          echo "ALPINE_VERSION=${{ inputs.alpine-version }}" >> $GITHUB_ENV
+          if [ '${{ inputs.alpine-version }}' == '' && '${{ inputs.alpine-version-file }}' != '' ]; then
+            echo "ALPINE_VERSION=$(cat ${{ inputs.alpine-version-file }})" >> $GITHUB_ENV
+          fi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -77,8 +100,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            GO_VERSION=${{ inputs.go-version }}
-            ALPINE_VERSION=${{ inputs.alpine-version }}
+            GO_VERSION=${{ env.GO_VERSION }}
+            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
             IMPORT_PRIVATE_REPO_GITHUB_TOKEN=${{ secrets.IMPORT_PRIVATE_REPO_GITHUB_TOKEN }}
 
       - id: set-output-image
