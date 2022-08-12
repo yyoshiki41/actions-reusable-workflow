@@ -76,14 +76,14 @@ jobs:
       - name: Set GO_VERSION
         run: |
           echo "GO_VERSION=${{ inputs.go-version }}" >> $GITHUB_ENV
-          if [ '${{ inputs.go-version }}' == '' && '${{ inputs.go-version-file }}' != '' ]; then
+          if [ '${{ inputs.go-version }}' == '' ] && [ '${{ inputs.go-version-file }}' != '' ]; then
             echo "GO_VERSION=$(cat ${{ inputs.go-version-file }})" >> $GITHUB_ENV
           fi
 
       - name: Set ALPINE_VERSION
         run: |
           echo "ALPINE_VERSION=${{ inputs.alpine-version }}" >> $GITHUB_ENV
-          if [ '${{ inputs.alpine-version }}' == '' && '${{ inputs.alpine-version-file }}' != '' ]; then
+          if [ '${{ inputs.alpine-version }}' == '' ] && [ '${{ inputs.alpine-version-file }}' != '' ]; then
             echo "ALPINE_VERSION=$(cat ${{ inputs.alpine-version-file }})" >> $GITHUB_ENV
           fi
 
