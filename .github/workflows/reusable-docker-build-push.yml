@@ -105,4 +105,4 @@ jobs:
             IMPORT_PRIVATE_REPO_GITHUB_TOKEN=${{ secrets.IMPORT_PRIVATE_REPO_GITHUB_TOKEN }}
 
       - id: set-output-image
-        run: echo "::set-output name=image::${{ steps.meta.outputs.tags }}"
+        run: echo "image=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
