@@ -71,6 +71,7 @@ jobs:
         with:
           images: ${{ inputs.registry }}/${{ inputs.repo-owner }}/${{ inputs.repo-name }}
           tags: |
+            type=ref,event=tag
             type=sha,prefix=${{ env.DATE }}-${{ env.TIME }}-
 
       - name: Set GO_VERSION
