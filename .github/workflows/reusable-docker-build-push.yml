@@ -19,6 +19,9 @@ on:
       repo-name:
         required: true
         type: string
+      tag:
+        required: false
+        type: string
       dockerfile:
         required: true
         type: string
@@ -71,7 +74,7 @@ jobs:
         with:
           images: ${{ inputs.registry }}/${{ inputs.repo-owner }}/${{ inputs.repo-name }}
           tags: |
-            type=ref,event=tag
+            type=raw,value=${{ inputs.tag }}
             type=sha,prefix=${{ env.DATE }}-${{ env.TIME }}-
 
       - name: Set GO_VERSION
