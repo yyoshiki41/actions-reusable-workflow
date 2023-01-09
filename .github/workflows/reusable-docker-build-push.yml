@@ -39,6 +39,10 @@ on:
         required: false
         type: string
         description: "If both the `alpine-version` and the `alpine-version-file` inputs are provided then the `alpine-version` input is used."
+      ref:
+        required: false
+        type: string
+        description: "Branch, tag or SHA to checkout"
 
     secrets:
       READ_AND_WRITE_GHCR_TOKEN:
@@ -56,6 +60,8 @@ jobs:
       image: ${{ steps.set-output-image.outputs.image }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
